@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Great Courses</title>
+</head>
+<body>
+    <div id="GreatCoursesConfigPage" data-role="page" class="page type-interior pluginConfigurationPage">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="GreatCoursesConfigForm">
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="LibraryPath">Great Courses folder</label>
+                        <input is="emby-input" id="LibraryPath" name="LibraryPath" type="text" required="required" />
+                        <div class="fieldDescription">The folder Jellyfin scans for Great Courses video and audio courses.</div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="DetectFromNfoFiles" />
+                            <span>Detect courses from local NFO files</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Treat folders with course-style NFO metadata as Great Courses even when the folder name is less explicit.</div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="InferMissingMetadata" />
+                            <span>Infer missing metadata</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Use folder and lecture filenames when no curated metadata has been found yet.</div>
+                    </div>
+                    <button is="emby-button" type="submit" class="raised button-submit block">
+                        <span>Save</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var GreatCoursesConfig = {
+                pluginUniqueId: "89fb13f4-35f1-4f41-8f3d-2f39a2f98620"
+            };
+
+            document.querySelector("#GreatCoursesConfigPage").addEventListener("pageshow", function () {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(GreatCoursesConfig.pluginUniqueId).then(function (config) {
+                    document.querySelector("#LibraryPath").value = config.LibraryPath || "/Volumes/Media/JellyFin/Great Courses";
+                    document.querySelector("#DetectFromNfoFiles").checked = config.DetectFromNfoFiles !== false;
+                    document.querySelector("#InferMissingMetadata").checked = config.InferMissingMetadata !== false;
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            document.querySelector("#GreatCoursesConfigForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(GreatCoursesConfig.pluginUniqueId).then(function (config) {
+                    config.LibraryPath = document.querySelector("#LibraryPath").value;
+                    config.DetectFromNfoFiles = document.querySelector("#DetectFromNfoFiles").checked;
+                    config.InferMissingMetadata = document.querySelector("#InferMissingMetadata").checked;
+                    ApiClient.updatePluginConfiguration(GreatCoursesConfig.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

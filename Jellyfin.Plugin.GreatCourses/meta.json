@@ -1,0 +1,15 @@
+{
+  "category": "Metadata",
+  "changelog": "Initial test build with Great Courses detection, local NFO metadata reading, and filename fallback metadata.",
+  "description": "Detects and enriches The Great Courses course libraries in Jellyfin.",
+  "guid": "89fb13f4-35f1-4f41-8f3d-2f39a2f98620",
+  "name": "Great Courses",
+  "overview": "Metadata provider for The Great Courses libraries",
+  "owner": "Stephen Hoos",
+  "targetAbi": "10.11.6.0",
+  "timestamp": "2026-05-31T00:00:00.0000000Z",
+  "version": "0.1.0.0",
+  "status": "Active",
+  "autoUpdate": false,
+  "assemblies": []
+}

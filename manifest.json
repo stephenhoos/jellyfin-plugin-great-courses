@@ -1,0 +1,23 @@
+[
+  {
+    "guid": "89fb13f4-35f1-4f41-8f3d-2f39a2f98620",
+    "name": "Great Courses",
+    "description": "Detects and enriches The Great Courses course libraries in Jellyfin.",
+    "overview": "Metadata provider for The Great Courses libraries",
+    "owner": "Stephen Hoos",
+    "category": "Metadata",
+    "versions": [
+      {
+        "version": "0.1.0.0",
+        "changelog": "Initial test build with Great Courses detection, local NFO metadata reading, and filename fallback metadata.",
+        "targetAbi": "10.11.6.0",
+        "sourceUrl": "https://github.com/stephenhoos/jellyfin-plugin-great-courses",
+        "checksum": "bbc04e41ec2dcd02e3531ae17da49795a4ea1169230b345b736488c0db7c5184",
+        "timestamp": "2026-05-31T00:00:00.0000000Z",
+        "repositoryName": "Great Courses",
+        "repositoryUrl": "https://raw.githubusercontent.com/stephenhoos/jellyfin-plugin-great-courses/main/manifest.json",
+        "packageUrl": "https://github.com/stephenhoos/jellyfin-plugin-great-courses/releases/download/v0.1.0/GreatCourses-plugin.zip"
+      }
+    ]
+  }
+]

@@ -1,0 +1,48 @@
+# Jellyfin Great Courses Plugin
+
+This plugin is an early Great Courses metadata provider for Jellyfin.
+
+It starts with the folder at `/Volumes/Media/JellyFin/Great Courses`, recognizes video and audio courses stored under that root, reads existing `tvshow.nfo` and episode `.nfo` files, and infers missing course or lecture titles from folders and Jellyfin-style filenames.
+
+## Current behavior
+
+- Treats configured library contents as Great Courses.
+- Supports course folders represented as TV series.
+- Supports lectures represented as episodes.
+- Reads course title, overview, course number, instructor, source URL, poster, and landscape image paths from local NFO.
+- Reads lecture title, season, episode number, show title, and thumbnail path from local NFO.
+- Falls back to sensible educational metadata when no NFO exists yet.
+
+## Build
+
+```bash
+dotnet build Jellyfin.Plugin.GreatCourses/Jellyfin.Plugin.GreatCourses.csproj -c Release
+```
+
+## Local install
+
+Copy the release output into a Jellyfin plugin folder named `Great Courses_0.1.0.0`, then restart Jellyfin.
+
+For example:
+
+```bash
+mkdir -p "/path/to/jellyfin/plugins/Great Courses_0.1.0.0"
+cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/Jellyfin.Plugin.GreatCourses.* "/path/to/jellyfin/plugins/Great Courses_0.1.0.0/"
+cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/meta.json "/path/to/jellyfin/plugins/Great Courses_0.1.0.0/"
+```
+
+## Plugin repository
+
+Jellyfin can use `manifest.json` as a plugin repository manifest once a release zip is published:
+
+```text
+https://raw.githubusercontent.com/stephenhoos/jellyfin-plugin-great-courses/main/manifest.json
+```
+
+## Next metadata sources
+
+The provider is structured so additional enrichment can be added without changing Jellyfin-facing code. Good next steps are:
+
+- Add a local curated JSON catalog for courses that do not already have NFO.
+- Add a metadata search provider for The Great Courses/Wondrium pages where available.
+- Add Amazon enrichment for product descriptions and cover art through an approved API or user-provided metadata export.
