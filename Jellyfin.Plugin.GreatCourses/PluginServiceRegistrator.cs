@@ -22,6 +22,7 @@ public sealed class PluginServiceRegistrator : IPluginServiceRegistrator
         serviceCollection.AddSingleton<GreatCourseEpisodeProvider>();
         serviceCollection.AddSingleton<IRemoteMetadataProvider<MediaBrowser.Controller.Entities.TV.Series, SeriesInfo>>(provider => provider.GetRequiredService<GreatCourseSeriesProvider>());
         serviceCollection.AddSingleton<IRemoteMetadataProvider<MediaBrowser.Controller.Entities.TV.Episode, EpisodeInfo>>(provider => provider.GetRequiredService<GreatCourseEpisodeProvider>());
+        serviceCollection.AddSingleton<IRemoteImageProvider>(provider => provider.GetRequiredService<GreatCourseSeriesProvider>());
         serviceCollection.AddSingleton<IMetadataProvider>(provider => provider.GetRequiredService<GreatCourseSeriesProvider>());
         serviceCollection.AddSingleton<IMetadataProvider>(provider => provider.GetRequiredService<GreatCourseEpisodeProvider>());
         serviceCollection.AddHostedService<GreatCoursesLibraryConfigurator>();

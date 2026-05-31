@@ -21,14 +21,14 @@ dotnet build Jellyfin.Plugin.GreatCourses/Jellyfin.Plugin.GreatCourses.csproj -c
 
 ## Local install
 
-Copy the release output into a Jellyfin plugin folder named `Great Courses_0.1.1.0`, then restart Jellyfin.
+Copy the release output into a Jellyfin plugin folder named `Great Courses_0.1.2.0`, then restart Jellyfin.
 
 For example:
 
 ```bash
-mkdir -p "/path/to/jellyfin/plugins/Great Courses_0.1.1.0"
-cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/Jellyfin.Plugin.GreatCourses.* "/path/to/jellyfin/plugins/Great Courses_0.1.1.0/"
-cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/meta.json "/path/to/jellyfin/plugins/Great Courses_0.1.1.0/"
+mkdir -p "/path/to/jellyfin/plugins/Great Courses_0.1.2.0"
+cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/Jellyfin.Plugin.GreatCourses.* "/path/to/jellyfin/plugins/Great Courses_0.1.2.0/"
+cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/meta.json "/path/to/jellyfin/plugins/Great Courses_0.1.2.0/"
 ```
 
 ## Plugin repository

@@ -141,8 +141,16 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
 
         if (metadataOnly)
         {
-            GetOrAdd(typeElement, "ImageFetchers").RemoveNodes();
-            GetOrAdd(typeElement, "ImageFetcherOrder").RemoveNodes();
+            var imageFetchers = GetOrAdd(typeElement, "ImageFetchers");
+            var imageFetcherOrder = GetOrAdd(typeElement, "ImageFetcherOrder");
+            imageFetchers.RemoveNodes();
+            imageFetcherOrder.RemoveNodes();
+
+            if (useGreatCourses)
+            {
+                imageFetchers.Add(new XElement("string", "Great Courses"));
+                imageFetcherOrder.Add(new XElement("string", "Great Courses"));
+            }
         }
     }
 
