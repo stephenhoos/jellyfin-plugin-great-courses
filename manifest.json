@@ -8,6 +8,17 @@
     "category": "Metadata",
     "versions": [
       {
+        "version": "0.1.1.0",
+        "changelog": "Adds managed Great Courses library setup and restricts the managed library to Great Courses metadata.",
+        "targetAbi": "10.11.6.0",
+        "sourceUrl": "https://github.com/stephenhoos/jellyfin-plugin-great-courses",
+        "checksum": "219a3a1d27281a1f3c4dc3920bedff83533f79cd50f002f71756041b61d1f9fc",
+        "timestamp": "2026-05-31T00:00:00.0000000Z",
+        "repositoryName": "Great Courses",
+        "repositoryUrl": "https://raw.githubusercontent.com/stephenhoos/jellyfin-plugin-great-courses/main/manifest.json",
+        "packageUrl": "https://github.com/stephenhoos/jellyfin-plugin-great-courses/releases/download/v0.1.1/GreatCourses-plugin.zip"
+      },
+      {
         "version": "0.1.0.0",
         "changelog": "Initial test build with Great Courses detection, local NFO metadata reading, and filename fallback metadata.",
         "targetAbi": "10.11.6.0",

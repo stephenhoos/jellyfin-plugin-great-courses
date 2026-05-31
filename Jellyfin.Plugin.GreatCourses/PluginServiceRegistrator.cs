@@ -4,6 +4,7 @@ using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Providers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Jellyfin.Plugin.GreatCourses;
 
@@ -19,7 +20,10 @@ public sealed class PluginServiceRegistrator : IPluginServiceRegistrator
         serviceCollection.AddSingleton<GreatCourseMetadataReader>();
         serviceCollection.AddSingleton<GreatCourseSeriesProvider>();
         serviceCollection.AddSingleton<GreatCourseEpisodeProvider>();
+        serviceCollection.AddSingleton<IRemoteMetadataProvider<MediaBrowser.Controller.Entities.TV.Series, SeriesInfo>>(provider => provider.GetRequiredService<GreatCourseSeriesProvider>());
+        serviceCollection.AddSingleton<IRemoteMetadataProvider<MediaBrowser.Controller.Entities.TV.Episode, EpisodeInfo>>(provider => provider.GetRequiredService<GreatCourseEpisodeProvider>());
         serviceCollection.AddSingleton<IMetadataProvider>(provider => provider.GetRequiredService<GreatCourseSeriesProvider>());
         serviceCollection.AddSingleton<IMetadataProvider>(provider => provider.GetRequiredService<GreatCourseEpisodeProvider>());
+        serviceCollection.AddHostedService<GreatCoursesLibraryConfigurator>();
     }
 }
