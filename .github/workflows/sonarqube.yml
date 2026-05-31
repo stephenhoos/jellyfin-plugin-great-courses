@@ -1,0 +1,83 @@
+name: SonarQube
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL || 'https://sonarcloud.io' }}
+      SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION || 'stephenhoos' }}
+      SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY || 'stephenhoos_jellyfin-plugin-great-courses' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache SonarQube scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v5
+        with:
+          path: ./.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarScanner for .NET
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        run: dotnet tool install dotnet-sonarscanner --tool-path ./.sonar/scanner
+
+      - name: Build
+        if: env.SONAR_TOKEN == ''
+        run: dotnet build Jellyfin.Plugin.GreatCourses/Jellyfin.Plugin.GreatCourses.csproj -c Release
+
+      - name: Explain skipped SonarQube analysis
+        if: env.SONAR_TOKEN == ''
+        run: |
+          echo "Skipping SonarQube analysis because the SONAR_TOKEN repository secret is not configured."
+          echo "Create the project in SonarQube Cloud, then add SONAR_TOKEN as a GitHub repository secret."
+          echo "Optional repository variables: SONAR_ORGANIZATION, SONAR_PROJECT_KEY, SONAR_HOST_URL."
+
+      - name: Build and analyze
+        if: env.SONAR_TOKEN != ''
+        run: |
+          ./.sonar/scanner/dotnet-sonarscanner begin \
+            /k:"${SONAR_PROJECT_KEY}" \
+            /o:"${SONAR_ORGANIZATION}" \
+            /d:sonar.host.url="${SONAR_HOST_URL}" \
+            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.qualitygate.wait=true
+          dotnet build Jellyfin.Plugin.GreatCourses/Jellyfin.Plugin.GreatCourses.csproj -c Release --no-incremental
+          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
