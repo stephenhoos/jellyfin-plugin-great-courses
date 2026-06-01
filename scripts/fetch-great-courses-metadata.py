@@ -84,7 +84,7 @@ def parse_course(page_html: str, source_url: str) -> dict[str, object]:
 
     lectures = []
     for match in re.finditer(
-        r"\n\s*(?P<number>\d{2}):\s*\n\s*(?P<title>[^\n]+)\n(?P<body>.*?)(?:\n\d+\s+min\n)",
+        r"\n\s*(?P<number>\d{2}):\s*\n\s*(?P<title>[^\n]+)\n(?P<body>.*?)\n\d+\s+min\n",
         text,
         flags=re.S,
     ):
