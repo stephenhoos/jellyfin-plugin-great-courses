@@ -1,5 +1,7 @@
 # Jellyfin Great Courses Plugin
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=stephenhoos_jellyfin-plugin-great-courses)](https://sonarcloud.io/summary/new_code?id=stephenhoos_jellyfin-plugin-great-courses)
+
 This plugin is an early Great Courses metadata provider for Jellyfin.
 
 It starts with the folder at `/Volumes/Media/JellyFin/Great Courses`, recognizes video and audio courses stored under that root, reads existing `tvshow.nfo` and episode `.nfo` files, and infers missing course or lecture titles from folders and Jellyfin-style filenames.
