@@ -12,6 +12,7 @@ It starts with the folder at `/Volumes/Media/JellyFin/Great Courses`, recognizes
 - Supports course folders represented as TV series.
 - Supports lectures represented as episodes.
 - Keeps PDF guidebooks and audiobook course folders eligible for Great Courses metadata and artwork through local NFO and image sidecars.
+- Leaves audio-only course folders out of TV-series NFO generation so Jellyfin presents them as playable folders instead of empty series.
 - Reads course title, overview, course number, instructor, source URL, poster, and landscape image paths from local NFO.
 - Reads lecture title, season, episode number, show title, and thumbnail path from local NFO.
 - Falls back to sensible educational metadata when no NFO exists yet.

@@ -34,7 +34,8 @@ COURSES = {
     "The Celtic World": "the-celtic-world",
 }
 
-MEDIA_EXTENSIONS = {".aac", ".flac", ".m4a", ".m4b", ".mkv", ".mp3", ".mp4", ".ogg", ".opus"}
+AUDIO_EXTENSIONS = {".aac", ".flac", ".m4a", ".m4b", ".mp3", ".ogg", ".opus"}
+MEDIA_EXTENSIONS = AUDIO_EXTENSIONS | {".mkv", ".mp4"}
 USER_AGENT = "Mozilla/5.0 (compatible; JellyfinGreatCoursesMetadata/0.1)"
 
 
@@ -168,6 +169,55 @@ def write_episode_nfos(course_dir: Path, course: dict[str, object]) -> int:
     return written
 
 
+def is_audio_only_course(course_dir: Path) -> bool:
+    media_files = [
+        path for path in course_dir.rglob("*")
+        if path.is_file() and path.suffix.lower() in MEDIA_EXTENSIONS
+    ]
+    return bool(media_files) and all(path.suffix.lower() in AUDIO_EXTENSIONS for path in media_files)
+
+
+def restore_single_audiobook(course_dir: Path) -> Path | None:
+    root_audio = sorted(
+        path for path in course_dir.iterdir()
+        if path.is_file() and path.suffix.lower() in AUDIO_EXTENSIONS
+    )
+    if root_audio:
+        return None
+
+    season_dir = course_dir / "Season 01"
+    if not season_dir.is_dir():
+        return None
+
+    season_audio = sorted(
+        path for path in season_dir.iterdir()
+        if path.is_file() and path.suffix.lower() in AUDIO_EXTENSIONS
+    )
+    if len(season_audio) != 1:
+        return None
+
+    source = season_audio[0]
+    destination = course_dir / f"{course_dir.name} - The Great Courses{source.suffix}"
+    source.rename(destination)
+    nfo_path = source.with_suffix(".nfo")
+    if nfo_path.exists():
+        nfo_path.unlink()
+    try:
+        season_dir.rmdir()
+    except OSError:
+        pass
+    return destination
+
+
+def remove_tvshow_nfo(course_dir: Path) -> bool:
+    nfo_path = course_dir / "tvshow.nfo"
+    if not nfo_path.exists():
+        return False
+
+    nfo_path.unlink()
+    return True
+
+
 def write_artwork(course_dir: Path, image_url: str, overwrite: bool) -> bool:
     if not image_url:
         return False
@@ -202,12 +252,22 @@ def main() -> int:
         source_url = f"https://shop.thegreatcourses.com/{slug}"
         print(f"FETCH {course_dir.name}")
         course = parse_course(fetch_text(source_url), source_url)
-        write_tvshow_nfo(course_dir, course)
-        nfos = write_episode_nfos(course_dir, course)
+        audio_only = is_audio_only_course(course_dir)
+        restored = restore_single_audiobook(course_dir) if audio_only else None
+        if audio_only:
+            removed_tvshow = remove_tvshow_nfo(course_dir)
+            nfos = 0
+        else:
+            write_tvshow_nfo(course_dir, course)
+            removed_tvshow = False
+            nfos = write_episode_nfos(course_dir, course)
         image_written = write_artwork(course_dir, str(course["image_url"]), args.overwrite_images)
-        total_nfos += nfos + 1
+        total_nfos += nfos + (0 if audio_only else 1)
         total_images += 1 if image_written else 0
-        print(f"  title={course['title']!r} course={course['course_number']} lectures={len(course['lectures'])} nfos={nfos} image={'yes' if image_written else 'no'}")
+        audio_label = " audio-only" if audio_only else ""
+        restored_label = f" restored={restored.name!r}" if restored else ""
+        removed_label = " removed-tvshow-nfo" if removed_tvshow else ""
+        print(f"  title={course['title']!r} course={course['course_number']} lectures={len(course['lectures'])} nfos={nfos} image={'yes' if image_written else 'no'}{audio_label}{restored_label}{removed_label}")
         time.sleep(0.25)
 
     print(f"DONE nfos={total_nfos} images={total_images}")
