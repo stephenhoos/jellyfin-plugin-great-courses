@@ -6,7 +6,7 @@ namespace Jellyfin.Plugin.GreatCourses.Services;
 /// <summary>
 /// Decides whether Jellyfin items belong to the configured Great Courses library.
 /// </summary>
-public sealed partial class GreatCourseDetector
+public static partial class GreatCourseDetector
 {
     /// <summary>
     /// Returns true when the path or name looks like a Great Courses item.
