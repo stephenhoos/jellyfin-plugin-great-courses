@@ -11,7 +11,7 @@ public sealed partial class GreatCourseDetector
     /// <summary>
     /// Returns true when the path or name looks like a Great Courses item.
     /// </summary>
-    public bool IsGreatCourse(string? name, string? path)
+    public static bool IsGreatCourse(string? name, string? path)
     {
         var configuration = Plugin.Instance?.Configuration ?? new PluginConfiguration();
 
@@ -55,7 +55,7 @@ public sealed partial class GreatCourseDetector
         var name = Path.GetFileNameWithoutExtension(value.Trim());
         name = GreatCoursesPrefixRegex().Replace(name, string.Empty);
         name = EpisodeSuffixRegex().Replace(name, string.Empty);
-        name = Regex.Replace(name, @"\s+", " ");
+        name = WhitespaceRegex().Replace(name, " ");
         return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(name.Trim().ToLowerInvariant());
     }
 
@@ -81,4 +81,7 @@ public sealed partial class GreatCourseDetector
 
     [GeneratedRegex(@"\s+-\s+S\d{2}E\d{2}.*$", RegexOptions.IgnoreCase)]
     private static partial Regex EpisodeSuffixRegex();
+
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex WhitespaceRegex();
 }

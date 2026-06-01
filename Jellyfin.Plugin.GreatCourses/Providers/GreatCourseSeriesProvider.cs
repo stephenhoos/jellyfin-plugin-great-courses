@@ -14,23 +14,21 @@ namespace Jellyfin.Plugin.GreatCourses.Providers;
 public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>, IRemoteImageProvider
 {
     private static readonly HttpClient HttpClient = new();
-    private readonly GreatCourseDetector _detector;
     private readonly GreatCourseMetadataReader _metadataReader;
 
-    public GreatCourseSeriesProvider(GreatCourseDetector detector, GreatCourseMetadataReader metadataReader)
+    public GreatCourseSeriesProvider(GreatCourseMetadataReader metadataReader)
     {
-        _detector = detector;
         _metadataReader = metadataReader;
     }
 
     public string Name => "Great Courses";
 
     public bool Supports(BaseItem item)
-        => item is Series && _detector.IsGreatCourse(item.Name, item.Path);
+        => item is Series && GreatCourseDetector.IsGreatCourse(item.Name, item.Path);
 
     public Task<MetadataResult<Series>> GetMetadata(SeriesInfo info, CancellationToken cancellationToken)
     {
-        if (!_detector.IsGreatCourse(info.Name, info.Path))
+        if (!GreatCourseDetector.IsGreatCourse(info.Name, info.Path))
         {
             return Task.FromResult(new MetadataResult<Series>());
         }
@@ -65,7 +63,7 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
 
     public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(SeriesInfo searchInfo, CancellationToken cancellationToken)
     {
-        if (!_detector.IsGreatCourse(searchInfo.Name, searchInfo.Path))
+        if (!GreatCourseDetector.IsGreatCourse(searchInfo.Name, searchInfo.Path))
         {
             return Task.FromResult(Enumerable.Empty<RemoteSearchResult>());
         }
@@ -97,7 +95,7 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
 
     public Task<IEnumerable<RemoteImageInfo>> GetImages(BaseItem item, CancellationToken cancellationToken)
     {
-        if (item is not Series || !_detector.IsGreatCourse(item.Name, item.Path))
+        if (item is not Series || !GreatCourseDetector.IsGreatCourse(item.Name, item.Path))
         {
             return Task.FromResult(Enumerable.Empty<RemoteImageInfo>());
         }

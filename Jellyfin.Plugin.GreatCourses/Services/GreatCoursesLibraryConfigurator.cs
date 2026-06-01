@@ -10,6 +10,10 @@ namespace Jellyfin.Plugin.GreatCourses.Services;
 /// </summary>
 public sealed class GreatCoursesLibraryConfigurator : IHostedService
 {
+    private const string GreatCoursesProviderName = "Great Courses";
+    private const string StringElementName = "string";
+    private const string TypeOptionsElementName = "TypeOptions";
+
     private static readonly string[] CollectionMarkers =
     {
         "books.collection",
@@ -61,7 +65,7 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
         }
 
         var libraryName = string.IsNullOrWhiteSpace(configuration.LibraryName)
-            ? "Great Courses"
+            ? GreatCoursesProviderName
             : configuration.LibraryName.Trim();
         var libraryDirectory = Path.Combine(_applicationPaths.ProgramDataPath, "root", "default", libraryName);
         Directory.CreateDirectory(libraryDirectory);
@@ -98,7 +102,7 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
                 new XElement("PathInfos"),
                 new XElement("PreferredMetadataLanguage", "en"),
                 new XElement("MetadataCountryCode", "US"),
-                new XElement("TypeOptions")));
+                new XElement(TypeOptionsElementName)));
 
     private static void ApplyLibraryOptions(XDocument document, PluginConfiguration configuration)
     {
@@ -110,7 +114,7 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
         pathInfos.RemoveNodes();
         pathInfos.Add(new XElement("MediaPathInfo", new XElement("Path", configuration.LibraryPath)));
 
-        var typeOptions = GetOrAdd(root, "TypeOptions");
+        var typeOptions = GetOrAdd(root, TypeOptionsElementName);
         ConfigureType(typeOptions, "Series", useGreatCourses: true, configuration.UseOnlyGreatCoursesMetadata);
         ConfigureType(typeOptions, "Episode", useGreatCourses: true, configuration.UseOnlyGreatCoursesMetadata);
         ConfigureType(typeOptions, "Season", useGreatCourses: false, configuration.UseOnlyGreatCoursesMetadata);
@@ -119,12 +123,12 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
 
     private static void ConfigureType(XElement typeOptionsRoot, string type, bool useGreatCourses, bool metadataOnly)
     {
-        var typeElement = typeOptionsRoot.Elements("TypeOptions")
+        var typeElement = typeOptionsRoot.Elements(TypeOptionsElementName)
             .FirstOrDefault(element => string.Equals(element.Element("Type")?.Value, type, StringComparison.OrdinalIgnoreCase));
 
         if (typeElement is null)
         {
-            typeElement = new XElement("TypeOptions", new XElement("Type", type));
+            typeElement = new XElement(TypeOptionsElementName, new XElement("Type", type));
             typeOptionsRoot.Add(typeElement);
         }
 
@@ -135,8 +139,8 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
 
         if (useGreatCourses)
         {
-            metadataFetchers.Add(new XElement("string", "Great Courses"));
-            metadataFetcherOrder.Add(new XElement("string", "Great Courses"));
+            metadataFetchers.Add(new XElement(StringElementName, GreatCoursesProviderName));
+            metadataFetcherOrder.Add(new XElement(StringElementName, GreatCoursesProviderName));
         }
 
         if (metadataOnly)
@@ -148,8 +152,8 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
 
             if (useGreatCourses)
             {
-                imageFetchers.Add(new XElement("string", "Great Courses"));
-                imageFetcherOrder.Add(new XElement("string", "Great Courses"));
+                imageFetchers.Add(new XElement(StringElementName, GreatCoursesProviderName));
+                imageFetcherOrder.Add(new XElement(StringElementName, GreatCoursesProviderName));
             }
         }
     }
