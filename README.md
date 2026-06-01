@@ -11,9 +11,14 @@ It starts with the folder at `/Volumes/Media/JellyFin/Great Courses`, recognizes
 - Treats configured library contents as Great Courses.
 - Supports course folders represented as TV series.
 - Supports lectures represented as episodes.
+- Keeps PDF guidebooks and audiobook course folders eligible for Great Courses metadata and artwork through local NFO and image sidecars.
 - Reads course title, overview, course number, instructor, source URL, poster, and landscape image paths from local NFO.
 - Reads lecture title, season, episode number, show title, and thumbnail path from local NFO.
 - Falls back to sensible educational metadata when no NFO exists yet.
+
+## PDF guidebooks
+
+Jellyfin already has an official Bookshelf plugin for book libraries. Bookshelf supports PDF guidebooks and common audiobook formats, so this plugin does not try to replace it with a separate reader. Great Courses keeps the course identity, NFO metadata, and artwork sidecars next to the media; Bookshelf can be installed from the Jellyfin plugin catalog when a dedicated PDF/book library view is wanted.
 
 ## Build
 
@@ -23,14 +28,14 @@ dotnet build Jellyfin.Plugin.GreatCourses/Jellyfin.Plugin.GreatCourses.csproj -c
 
 ## Local install
 
-Copy the release output into a Jellyfin plugin folder named `Great Courses_0.1.2.0`, then restart Jellyfin.
+Copy the release output into a Jellyfin plugin folder named `Great Courses_0.1.3.0`, then restart Jellyfin.
 
 For example:
 
 ```bash
-mkdir -p "/path/to/jellyfin/plugins/Great Courses_0.1.2.0"
-cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/Jellyfin.Plugin.GreatCourses.* "/path/to/jellyfin/plugins/Great Courses_0.1.2.0/"
-cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/meta.json "/path/to/jellyfin/plugins/Great Courses_0.1.2.0/"
+mkdir -p "/path/to/jellyfin/plugins/Great Courses_0.1.3.0"
+cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/Jellyfin.Plugin.GreatCourses.* "/path/to/jellyfin/plugins/Great Courses_0.1.3.0/"
+cp Jellyfin.Plugin.GreatCourses/bin/Release/net9.0/meta.json "/path/to/jellyfin/plugins/Great Courses_0.1.3.0/"
 ```
 
 ## Plugin repository

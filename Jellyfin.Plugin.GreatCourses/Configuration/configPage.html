@@ -27,6 +27,14 @@
                         </label>
                         <div class="fieldDescription checkboxFieldDescription">Use folder and lecture filenames when no curated metadata has been found yet.</div>
                     </div>
+                    <div class="detailSection" style="margin: 2em 0;">
+                        <h2>PDF and audiobook support</h2>
+                        <p id="BookshelfStatus" class="fieldDescription">Checking for Jellyfin Bookshelf...</p>
+                        <p class="fieldDescription">Bookshelf is the Jellyfin plugin that handles PDF, EPUB, comic, and audiobook libraries. Great Courses will keep course metadata and artwork in this library; Bookshelf is the better place for reading guidebooks.</p>
+                        <a is="emby-linkbutton" class="raised button-alt" href="https://repo.jellyfin.org/files/plugin/manifest.json" target="_blank">
+                            <span>Official plugin manifest</span>
+                        </a>
+                    </div>
                     <button is="emby-button" type="submit" class="raised button-submit block">
                         <span>Save</span>
                     </button>
@@ -45,6 +53,16 @@
                     document.querySelector("#DetectFromNfoFiles").checked = config.DetectFromNfoFiles !== false;
                     document.querySelector("#InferMissingMetadata").checked = config.InferMissingMetadata !== false;
                     Dashboard.hideLoadingMsg();
+                });
+                ApiClient.getJSON(ApiClient.getUrl("Plugins")).then(function (plugins) {
+                    var bookshelf = plugins.some(function (plugin) {
+                        return plugin.Name === "Bookshelf";
+                    });
+                    document.querySelector("#BookshelfStatus").textContent = bookshelf
+                        ? "Bookshelf is installed. Use it for guidebook PDFs and audiobook-style libraries."
+                        : "Bookshelf is not installed. Install it from Dashboard > Plugins > Catalog to enable PDF guidebooks and book-library playback.";
+                }, function () {
+                    document.querySelector("#BookshelfStatus").textContent = "Unable to check Bookshelf status from this page.";
                 });
             });
 

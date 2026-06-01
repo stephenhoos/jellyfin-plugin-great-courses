@@ -8,6 +8,17 @@
     "category": "Metadata",
     "versions": [
       {
+        "version": "0.1.3.0",
+        "changelog": "Adds Bookshelf PDF guidance and expands metadata/artwork fetching for audiobook course folders.",
+        "targetAbi": "10.11.6.0",
+        "sourceUrl": "https://github.com/stephenhoos/jellyfin-plugin-great-courses",
+        "checksum": "c73489131fce0c337da274a6e48cfa3034f20a7e198aaf79f7ad2c01eba52d0f",
+        "timestamp": "2026-05-31T00:00:00.0000000Z",
+        "repositoryName": "Great Courses",
+        "repositoryUrl": "https://raw.githubusercontent.com/stephenhoos/jellyfin-plugin-great-courses/main/manifest.json",
+        "packageUrl": "https://github.com/stephenhoos/jellyfin-plugin-great-courses/releases/download/v0.1.3/GreatCourses-plugin.zip"
+      },
+      {
         "version": "0.1.2.0",
         "changelog": "Adds Great Courses image fetching and an official metadata/artwork import script.",
         "targetAbi": "10.11.6.0",

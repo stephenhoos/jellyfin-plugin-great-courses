@@ -15,6 +15,8 @@ from pathlib import Path
 
 
 COURSES = {
+    "Ancient Mesopotamia - Life in the Cradle of Civilization": "ancient-mesopotamia-life-in-the-cradle-of-civilization",
+    "Athenian Democracy An Experiment for the Ages": "athenian-democracy-an-experiment-for-the-ages",
     "Great Courses The Black Death": "the-black-death-the-worlds-most-devastating-plague",
     "Great Courses Books That Matter The History of the Decline and Fall of the Roman Empire": "books-that-matter-the-history-of-the-decline-and-fall-of-the-roman-empire",
     "Great Courses Classical Mythology": "classical-mythology",
@@ -28,9 +30,11 @@ COURSES = {
     "Great Courses The Ottoman Empire": "the-ottoman-empire",
     "Great Courses Understanding the New Testament": "understanding-the-new-testament",
     "Great Courses World War II The Pacific Theater": "world-war-ii-the-pacific-theater-8756",
+    "The Age of Benjamin Franklin": "the-age-of-benjamin-franklin",
+    "The Celtic World": "the-celtic-world",
 }
 
-MEDIA_EXTENSIONS = {".m4a", ".m4b", ".mkv", ".mp3", ".mp4"}
+MEDIA_EXTENSIONS = {".aac", ".flac", ".m4a", ".m4b", ".mkv", ".mp3", ".mp4", ".ogg", ".opus"}
 USER_AGENT = "Mozilla/5.0 (compatible; JellyfinGreatCoursesMetadata/0.1)"
 
 
