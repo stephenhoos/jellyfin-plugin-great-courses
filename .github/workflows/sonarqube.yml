@@ -78,6 +78,8 @@ jobs:
             /o:"${SONAR_ORGANIZATION}" \
             /d:sonar.host.url="${SONAR_HOST_URL}" \
             /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.coverage.exclusions="**/*" \
+            /d:sonar.python.version="3.11" \
             /d:sonar.qualitygate.wait=true
           dotnet build Jellyfin.Plugin.GreatCourses/Jellyfin.Plugin.GreatCourses.csproj -c Release --no-incremental
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"

@@ -16,7 +16,6 @@ public sealed class PluginServiceRegistrator : IPluginServiceRegistrator
     /// <inheritdoc />
     public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
     {
-        serviceCollection.AddSingleton<GreatCourseMetadataReader>();
         serviceCollection.AddSingleton<GreatCourseSeriesProvider>();
         serviceCollection.AddSingleton<GreatCourseEpisodeProvider>();
         serviceCollection.AddSingleton<IRemoteMetadataProvider<MediaBrowser.Controller.Entities.TV.Series, SeriesInfo>>(provider => provider.GetRequiredService<GreatCourseSeriesProvider>());

@@ -14,12 +14,6 @@ namespace Jellyfin.Plugin.GreatCourses.Providers;
 public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>, IRemoteImageProvider
 {
     private static readonly HttpClient HttpClient = new();
-    private readonly GreatCourseMetadataReader _metadataReader;
-
-    public GreatCourseSeriesProvider(GreatCourseMetadataReader metadataReader)
-    {
-        _metadataReader = metadataReader;
-    }
 
     public string Name => "Great Courses";
 
@@ -33,7 +27,7 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
             return Task.FromResult(new MetadataResult<Series>());
         }
 
-        var metadata = _metadataReader.ReadCourse(info.Name, info.Path);
+        var metadata = GreatCourseMetadataReader.ReadCourse(info.Name, info.Path);
         if (metadata is null)
         {
             return Task.FromResult(new MetadataResult<Series>());
@@ -68,7 +62,7 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
             return Task.FromResult(Enumerable.Empty<RemoteSearchResult>());
         }
 
-        var metadata = _metadataReader.ReadCourse(searchInfo.Name, searchInfo.Path);
+        var metadata = GreatCourseMetadataReader.ReadCourse(searchInfo.Name, searchInfo.Path);
         if (metadata is null)
         {
             return Task.FromResult(Enumerable.Empty<RemoteSearchResult>());
@@ -100,7 +94,7 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
             return Task.FromResult(Enumerable.Empty<RemoteImageInfo>());
         }
 
-        var metadata = _metadataReader.ReadCourse(item.Name, item.Path);
+        var metadata = GreatCourseMetadataReader.ReadCourse(item.Name, item.Path);
         if (metadata is null)
         {
             return Task.FromResult(Enumerable.Empty<RemoteImageInfo>());

@@ -8,12 +8,12 @@ namespace Jellyfin.Plugin.GreatCourses.Services;
 /// <summary>
 /// Reads local NFO metadata and infers missing course metadata from Jellyfin-friendly filenames.
 /// </summary>
-public sealed partial class GreatCourseMetadataReader
+public static partial class GreatCourseMetadataReader
 {
     /// <summary>
     /// Reads a course folder's metadata.
     /// </summary>
-    public GreatCourseMetadata? ReadCourse(string? name, string? path)
+    public static GreatCourseMetadata? ReadCourse(string? name, string? path)
     {
         var courseDirectory = FindCourseDirectory(path);
         var nfoPath = courseDirectory is null ? null : Path.Combine(courseDirectory, "tvshow.nfo");
@@ -45,7 +45,7 @@ public sealed partial class GreatCourseMetadataReader
     /// <summary>
     /// Reads metadata for a lecture file.
     /// </summary>
-    public GreatCourseLectureMetadata? ReadLecture(string? name, string? path)
+    public static GreatCourseLectureMetadata? ReadLecture(string? name, string? path)
     {
         var nfoPath = path is null ? null : Path.ChangeExtension(path, ".nfo");
         if (nfoPath is not null && File.Exists(nfoPath))

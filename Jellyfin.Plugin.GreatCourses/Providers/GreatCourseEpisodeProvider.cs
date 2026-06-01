@@ -11,13 +11,6 @@ namespace Jellyfin.Plugin.GreatCourses.Providers;
 /// </summary>
 public sealed class GreatCourseEpisodeProvider : IRemoteMetadataProvider<Episode, EpisodeInfo>
 {
-    private readonly GreatCourseMetadataReader _metadataReader;
-
-    public GreatCourseEpisodeProvider(GreatCourseMetadataReader metadataReader)
-    {
-        _metadataReader = metadataReader;
-    }
-
     public string Name => "Great Courses";
 
     public Task<MetadataResult<Episode>> GetMetadata(EpisodeInfo info, CancellationToken cancellationToken)
@@ -27,7 +20,7 @@ public sealed class GreatCourseEpisodeProvider : IRemoteMetadataProvider<Episode
             return Task.FromResult(new MetadataResult<Episode>());
         }
 
-        var metadata = _metadataReader.ReadLecture(info.Name, info.Path);
+        var metadata = GreatCourseMetadataReader.ReadLecture(info.Name, info.Path);
         if (metadata is null)
         {
             return Task.FromResult(new MetadataResult<Episode>());
@@ -52,7 +45,7 @@ public sealed class GreatCourseEpisodeProvider : IRemoteMetadataProvider<Episode
             return Task.FromResult(Enumerable.Empty<RemoteSearchResult>());
         }
 
-        var metadata = _metadataReader.ReadLecture(searchInfo.Name, searchInfo.Path);
+        var metadata = GreatCourseMetadataReader.ReadLecture(searchInfo.Name, searchInfo.Path);
         if (metadata is null)
         {
             return Task.FromResult(Enumerable.Empty<RemoteSearchResult>());
