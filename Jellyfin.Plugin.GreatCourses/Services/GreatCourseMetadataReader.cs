@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using Jellyfin.Plugin.GreatCourses.Models;
 
@@ -76,7 +77,7 @@ public static partial class GreatCourseMetadataReader
 
     private static GreatCourseMetadata? ReadCourseNfo(string nfoPath)
     {
-        var document = XDocument.Load(nfoPath);
+        var document = LoadXml(nfoPath);
         var root = document.Root;
         if (root is null)
         {
@@ -99,7 +100,7 @@ public static partial class GreatCourseMetadataReader
 
     private static GreatCourseLectureMetadata? ReadLectureNfo(string nfoPath)
     {
-        var document = XDocument.Load(nfoPath);
+        var document = LoadXml(nfoPath);
         var root = document.Root;
         if (root is null)
         {
@@ -152,6 +153,17 @@ public static partial class GreatCourseMetadataReader
         }
 
         return Path.IsPathRooted(value) ? value : Path.Combine(directory, value);
+    }
+
+    private static XDocument LoadXml(string path)
+    {
+        var settings = new XmlReaderSettings
+        {
+            DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null
+        };
+        using var reader = XmlReader.Create(path, settings);
+        return XDocument.Load(reader);
     }
 
     private static string BuildSearchUrl(string title)

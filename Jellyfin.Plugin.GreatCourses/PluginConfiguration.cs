@@ -10,7 +10,7 @@ public sealed class PluginConfiguration : BasePluginConfiguration
     /// <summary>
     /// Gets or sets the folder where Great Courses are stored.
     /// </summary>
-    public string LibraryPath { get; set; } = "/Volumes/Media/JellyFin/Great Courses";
+    public string LibraryPath { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the Jellyfin library name managed by the plugin.

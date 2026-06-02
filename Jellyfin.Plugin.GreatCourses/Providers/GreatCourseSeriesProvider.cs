@@ -13,7 +13,13 @@ namespace Jellyfin.Plugin.GreatCourses.Providers;
 /// </summary>
 public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, SeriesInfo>, IRemoteImageProvider
 {
-    private static readonly HttpClient HttpClient = new();
+    private static readonly HashSet<string> ImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp"
+    };
 
     public string Name => "Great Courses";
 
@@ -107,16 +113,11 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
         return Task.FromResult<IEnumerable<RemoteImageInfo>>(images);
     }
 
-    public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
+    public Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
     {
-        if (Uri.TryCreate(url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+        if (!IsAllowedLocalImage(url))
         {
-            return await HttpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false);
-        }
-
-        if (!File.Exists(url))
-        {
-            return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+            return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.NotFound));
         }
 
         var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
@@ -124,7 +125,7 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
             Content = new StreamContent(File.OpenRead(url))
         };
         response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(GetMimeType(url));
-        return response;
+        return Task.FromResult(response);
     }
 
     private void AddImage(List<RemoteImageInfo> images, string? url, ImageType type)
@@ -158,5 +159,25 @@ public sealed class GreatCourseSeriesProvider : IRemoteMetadataProvider<Series, 
         }
 
         return "image/jpeg";
+    }
+
+    private static bool IsAllowedLocalImage(string path)
+    {
+        if (!ImageExtensions.Contains(Path.GetExtension(path)) || !File.Exists(path))
+        {
+            return false;
+        }
+
+        var libraryPath = Plugin.Instance?.Configuration.LibraryPath;
+        if (string.IsNullOrWhiteSpace(libraryPath))
+        {
+            return false;
+        }
+
+        var fullPath = Path.GetFullPath(path);
+        var root = Path.GetFullPath(libraryPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        return fullPath.Equals(root, StringComparison.OrdinalIgnoreCase)
+            || fullPath.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+            || fullPath.StartsWith(root + Path.AltDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
     }
 }

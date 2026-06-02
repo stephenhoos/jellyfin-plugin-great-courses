@@ -4,7 +4,7 @@
 
 This plugin is an early Great Courses metadata provider for Jellyfin.
 
-It starts with the folder at `/Volumes/Media/JellyFin/Great Courses`, recognizes video and audio courses stored under that root, reads existing `tvshow.nfo` and episode `.nfo` files, and infers missing course or lecture titles from folders and Jellyfin-style filenames.
+It recognizes video and audio courses in Jellyfin libraries, reads existing `tvshow.nfo` and episode `.nfo` files, and infers missing course or lecture titles from folders and Jellyfin-style filenames.
 
 ## Current behavior
 
@@ -46,21 +46,6 @@ Jellyfin can use `manifest.json` as a plugin repository manifest once a release 
 ```text
 https://raw.githubusercontent.com/stephenhoos/jellyfin-plugin-great-courses/main/manifest.json
 ```
-
-## SonarQube scanning
-
-The repository includes a GitHub Actions workflow at `.github/workflows/sonarqube.yml`.
-
-To enable SonarQube Cloud analysis:
-
-1. Create/import this repository as a SonarQube Cloud project.
-2. Add a GitHub repository secret named `SONAR_TOKEN`.
-3. Optional: add repository variables if your Sonar keys differ from the defaults:
-   - `SONAR_ORGANIZATION` defaults to `stephenhoos`
-   - `SONAR_PROJECT_KEY` defaults to `stephenhoos_jellyfin-plugin-great-courses`
-   - `SONAR_HOST_URL` defaults to `https://sonarcloud.io`
-
-Until `SONAR_TOKEN` exists, the workflow still builds the plugin and prints setup instructions instead of failing public pull requests.
 
 ## Next metadata sources
 

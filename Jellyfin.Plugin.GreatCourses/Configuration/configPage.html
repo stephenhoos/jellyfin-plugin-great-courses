@@ -49,7 +49,7 @@
             document.querySelector("#GreatCoursesConfigPage").addEventListener("pageshow", function () {
                 Dashboard.showLoadingMsg();
                 ApiClient.getPluginConfiguration(GreatCoursesConfig.pluginUniqueId).then(function (config) {
-                    document.querySelector("#LibraryPath").value = config.LibraryPath || "/Volumes/Media/JellyFin/Great Courses";
+                    document.querySelector("#LibraryPath").value = config.LibraryPath || "";
                     document.querySelector("#DetectFromNfoFiles").checked = config.DetectFromNfoFiles !== false;
                     document.querySelector("#InferMissingMetadata").checked = config.InferMissingMetadata !== false;
                     Dashboard.hideLoadingMsg();

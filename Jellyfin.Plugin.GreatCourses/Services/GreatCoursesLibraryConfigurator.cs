@@ -1,4 +1,5 @@
 using System.Xml.Linq;
+using System.Xml;
 using MediaBrowser.Common.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -67,10 +68,11 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
         var libraryName = string.IsNullOrWhiteSpace(configuration.LibraryName)
             ? GreatCoursesProviderName
             : configuration.LibraryName.Trim();
-        var libraryDirectory = Path.Combine(_applicationPaths.ProgramDataPath, "root", "default", libraryName);
+        var safeLibraryName = SafeDirectoryName(libraryName);
+        var libraryDirectory = Path.Combine(_applicationPaths.ProgramDataPath, "root", "default", safeLibraryName);
         Directory.CreateDirectory(libraryDirectory);
 
-        File.WriteAllText(Path.Combine(libraryDirectory, libraryName + ".mblink"), configuration.LibraryPath);
+        File.WriteAllText(Path.Combine(libraryDirectory, safeLibraryName + ".mblink"), configuration.LibraryPath);
 
         foreach (var marker in CollectionMarkers)
         {
@@ -84,7 +86,7 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
         File.WriteAllText(Path.Combine(libraryDirectory, "tvshows.collection"), string.Empty);
 
         var optionsPath = Path.Combine(libraryDirectory, "options.xml");
-        var document = File.Exists(optionsPath) ? XDocument.Load(optionsPath) : CreateDefaultOptions();
+        var document = File.Exists(optionsPath) ? LoadXml(optionsPath) : CreateDefaultOptions();
         ApplyLibraryOptions(document, configuration);
         document.Save(optionsPath);
 
@@ -219,5 +221,26 @@ public sealed class GreatCoursesLibraryConfigurator : IHostedService
     {
         var element = GetOrAdd(root, name);
         element.Value = value;
+    }
+
+    private static XDocument LoadXml(string path)
+    {
+        var settings = new XmlReaderSettings
+        {
+            DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null
+        };
+        using var reader = XmlReader.Create(path, settings);
+        return XDocument.Load(reader);
+    }
+
+    private static string SafeDirectoryName(string value)
+    {
+        var invalidCharacters = Path.GetInvalidFileNameChars()
+            .Append(Path.DirectorySeparatorChar)
+            .Append(Path.AltDirectorySeparatorChar)
+            .ToArray();
+        var name = string.Join("_", value.Split(invalidCharacters, StringSplitOptions.RemoveEmptyEntries)).Trim();
+        return string.IsNullOrWhiteSpace(name) ? GreatCoursesProviderName : name;
     }
 }

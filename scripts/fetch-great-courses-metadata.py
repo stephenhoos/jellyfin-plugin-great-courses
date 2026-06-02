@@ -231,6 +231,41 @@ def write_artwork(course_dir: Path, image_url: str, overwrite: bool) -> bool:
     return True
 
 
+def process_course(course_dir: Path, overwrite_images: bool) -> tuple[int, bool, dict[str, object], bool, Path | None, bool]:
+    source_url = f"https://shop.thegreatcourses.com/{COURSES[course_dir.name]}"
+    course = parse_course(fetch_text(source_url), source_url)
+    audio_only = is_audio_only_course(course_dir)
+    restored = restore_single_audiobook(course_dir) if audio_only else None
+    removed_tvshow = remove_tvshow_nfo(course_dir) if audio_only else False
+    nfos = 0 if audio_only else write_video_course_nfos(course_dir, course)
+    image_written = write_artwork(course_dir, str(course["image_url"]), overwrite_images)
+    return nfos, image_written, course, audio_only, restored, removed_tvshow
+
+
+def write_video_course_nfos(course_dir: Path, course: dict[str, object]) -> int:
+    write_tvshow_nfo(course_dir, course)
+    return write_episode_nfos(course_dir, course)
+
+
+def course_status(
+    course: dict[str, object],
+    nfos: int,
+    image_written: bool,
+    audio_only: bool,
+    restored: Path | None,
+    removed_tvshow: bool,
+) -> str:
+    audio_label = " audio-only" if audio_only else ""
+    restored_label = f" restored={restored.name!r}" if restored else ""
+    removed_label = " removed-tvshow-nfo" if removed_tvshow else ""
+    return (
+        f"  title={course['title']!r} course={course['course_number']} "
+        f"lectures={len(course['lectures'])} nfos={nfos} "
+        f"image={'yes' if image_written else 'no'}"
+        f"{audio_label}{restored_label}{removed_label}"
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("library", type=Path)
@@ -244,30 +279,18 @@ def main() -> int:
     total_nfos = 0
     total_images = 0
     for course_dir in sorted(path for path in args.library.iterdir() if path.is_dir()):
-        slug = COURSES.get(course_dir.name)
-        if not slug:
+        if course_dir.name not in COURSES:
             print(f"SKIP no slug mapping: {course_dir.name}")
             continue
 
-        source_url = f"https://shop.thegreatcourses.com/{slug}"
         print(f"FETCH {course_dir.name}")
-        course = parse_course(fetch_text(source_url), source_url)
-        audio_only = is_audio_only_course(course_dir)
-        restored = restore_single_audiobook(course_dir) if audio_only else None
-        if audio_only:
-            removed_tvshow = remove_tvshow_nfo(course_dir)
-            nfos = 0
-        else:
-            write_tvshow_nfo(course_dir, course)
-            removed_tvshow = False
-            nfos = write_episode_nfos(course_dir, course)
-        image_written = write_artwork(course_dir, str(course["image_url"]), args.overwrite_images)
+        nfos, image_written, course, audio_only, restored, removed_tvshow = process_course(
+            course_dir,
+            args.overwrite_images,
+        )
         total_nfos += nfos + (0 if audio_only else 1)
         total_images += 1 if image_written else 0
-        audio_label = " audio-only" if audio_only else ""
-        restored_label = f" restored={restored.name!r}" if restored else ""
-        removed_label = " removed-tvshow-nfo" if removed_tvshow else ""
-        print(f"  title={course['title']!r} course={course['course_number']} lectures={len(course['lectures'])} nfos={nfos} image={'yes' if image_written else 'no'}{audio_label}{restored_label}{removed_label}")
+        print(course_status(course, nfos, image_written, audio_only, restored, removed_tvshow))
         time.sleep(0.25)
 
     print(f"DONE nfos={total_nfos} images={total_images}")
